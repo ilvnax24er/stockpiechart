@@ -368,4 +368,7 @@ def check(n_clicks, y, e):
 
 
 
-app.run_server(debug=True)
+
+if __name__ == '__main__':
+    app.debug = False
+    app.run()
