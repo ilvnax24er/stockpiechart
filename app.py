@@ -161,9 +161,9 @@ tab_selected_style = {
 app.layout = dbc.Container([
     dbc.Row([
         html.H1('Stock Pie Chart by Sector and Industry'),
-        html.H4('Stock 표를 본인이 보유하신 주식으로 채운뒤, Submit 버튼을 눌러주세요'),
+        html.H4('Stock 표를 본인이 보유하신 주식으로 채운뒤, Submit 버튼을 눌러주세요.'),
         html.H4('Ticker는 꼭 소문자로 작성해주세요'),
-        html.H4('Number에는 보유하신 갯수를 넣어주세요'),
+        html.H4(' Number에는 보유하신 개수를 넣어주세요'),
         html.H4('ETF는 지원하지 않습니다. ETF는 표에서 제거해주세요'),
         html.H4('주식 데이터를 불러오는데 많은 시간이 소요됩니다. 인내심을 갖고 기다려주세요!')
     ]),
