@@ -9,7 +9,6 @@ import plotly.express as px
 import yfinance as yf
 import dash_bootstrap_components as dbc
 
-
 cols = ['Ticker', 'Number']
 Energy = '석유, 천연가스, 석탄과 같은 화석연료의 탐사, 생산, 정제, 마케팅을 하는 대부분의 회사들과 지구에서 에너지원을 추출할 수 있는 서비스와 장비를 제공하는 기업을 Energy로 분류합니다. 유전 서비스 회사로서 대기업의 유전탐사나 Fracturing에 필요한 장비, 유체 및 재료를 판매하는 경우에도 Energy Sector로 분류됩니다.'
 Energy_example = 'Exxon Mobil Corp.(XOM), Schlumberger(SLB), Kinder Morgan(KMI), Halliburton Co.(HAL)'
@@ -45,7 +44,7 @@ RealEstate_etf = 'Vanguard Real Estate ETF(VNQ)'
 
 HealthCare = 'Health Care는 두가지 주 요소로 구성되는데, 생명공학 기술을 기반으로 의약품 및 치료제를 개발하는 회사뿐만 아니라 이러한 치료제를 테스트하는 임상 실험에 필요한 분석 도구 및 공급품이 포함됩니다. 다른 하나는 수술용품, 의료 진단 도구 및 의료 보험을 포함한 의료 장비 및 서비스를 제공합니다.'
 HealthCare_example = 'Johnson & Johnson(JNJ), Pfizer(PFE), McKesson Corp.(MCK), Abbott Laboratories(ABT)'
-HealthCare_etf =  'Health Care Select Sector SPDR ETF(XLV)'
+HealthCare_etf = 'Health Care Select Sector SPDR ETF(XLV)'
 
 ConsumerStaple = '식품제조업자와 유통업자, 비내구적 생활용품, 개인 관리용품과 음료수 등 경제에 상관없이 사람들이 계속 필요로 하는 생활 필수품을 의미합니다. 가장 방어적인 부문중 하나이며, 불황에도 유지하거나 심지어 성장하지만, 경제성장 기간동안 시장에 뒤쳐지는 종목입니다. 이 범주에는 가정 및 개인 관리 제품, 음식, 음료, 담배 및 슈퍼마켓과 같은 판매를 전문으로 하는 소매 회사도 포함합니다.'
 ConsumerStaple_example = 'Coca-Cola Co.(KO), Colgate-Palmolive(CL), Procter & Gamble Co.(PG), Walmart(WMT)'
@@ -56,12 +55,12 @@ Utility_example = 'NextEra Energy(NEE), Duke Energy(DUK), Exelon Corp.(EXC), Dom
 Utility_etf = 'Utilities Select Sector SPDR ETF(XLU)'
 
 
-
 def data_to_frame(y):
     df = pd.DataFrame(y)
     tickers = df['ticker-data']
     numbers = df['number-data']
     return df, tickers, numbers
+
 
 def get_data_from_yf(tickers):
     data = []
@@ -75,12 +74,14 @@ def get_data_from_yf(tickers):
 
     return pd.DataFrame(data)
 
+
 def cal_volume(final_data):
     cols = ['Ticker', 'Close', 'Sector', 'Industry', 'Number']
     final_data.columns = cols
     final_data['Volume'] = final_data['Close'] * final_data['Number']
 
     return final_data
+
 
 def make_final_df(y):
     df, tickers, numbers = data_to_frame(y)
@@ -91,6 +92,7 @@ def make_final_df(y):
 
     return final
 
+
 ### ETF ###
 def get_data_from_yf_etf(tickers):
     data = []
@@ -100,12 +102,12 @@ def get_data_from_yf_etf(tickers):
         cat = stock.info['category']
         datum = [ticker, close, cat]
         data.append(datum)
-        
+
     return pd.DataFrame(data)
 
 
 def cal_volume_etf(df):
-    cols = ['Ticker','Close','Industry','Number','Sector']
+    cols = ['Ticker', 'Close', 'Industry', 'Number', 'Sector']
     df.columns = cols
     df['Volume'] = df['Close'] * df['Number']
 
@@ -122,6 +124,7 @@ def make_final_df_etf(etf):
 
     return final
 
+
 def cal_percentage(a):
     df = pd.DataFrame(a)
     df['Percentage'] = round(df['Volume'] / df['Volume'].sum() * 100, 3)
@@ -131,23 +134,24 @@ def cal_percentage(a):
 
 def make_pie_chart(df):
     fig = px.sunburst(data_frame=df,
-                     path = ['Sector','Industry','Ticker'],
-                     values = 'Volume',
-                     template = 'ggplot2',
-                     height = 700)
+                      path=['Sector', 'Industry', 'Ticker'],
+                      values='Volume',
+                      template='ggplot2',
+                      height=700)
     return fig
+
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 # tab layout
 tabs_styles = {
-    'height' : '44px'
+    'height': '44px'
 }
 tab_style = {
-    'borderBotton' : '1px solid #d6d6d6',
-    'padding' : '6px',
-    'fontWeight' : 'bold'
+    'borderBotton': '1px solid #d6d6d6',
+    'padding': '6px',
+    'fontWeight': 'bold'
 }
 tab_selected_style = {
     'borderTop': '1px solid #d6d6d6',
@@ -157,85 +161,78 @@ tab_selected_style = {
     'padding': '6px'
 }
 
-
 app.layout = dbc.Container([
     dbc.Row([
         html.H1('Stock Pie Chart by Sector and Industry'),
-        html.H4('Stock 표를 본인이 보유하신 주식으로 채운뒤, Submit 버튼을 눌러주세요.'),
-        html.H4('Ticker는 꼭 소문자로 작성해주세요'),
-        html.H4(' Number에는 보유하신 개수를 넣어주세요'),
+        html.H4('Stock 표를 본인이 보유하신 주식으로 채운뒤, Submit 버튼을 눌러주세요'),
         html.H4('ETF는 지원하지 않습니다. ETF는 표에서 제거해주세요'),
         html.H4('주식 데이터를 불러오는데 많은 시간이 소요됩니다. 인내심을 갖고 기다려주세요!')
     ]),
 
-
     dbc.Row([
         dbc.Col(
-        html.Div([
-            html.H1('Stock'),
-            dash_table.DataTable(
-                id='adding-rows-table',
-                columns=[
-                    {'name' : 'Ticker', 'id' : 'ticker-data'},
-                    {'name' : 'Number', 'id' : 'number-data'}
-                ],
-                data=[{}],
-                editable=True,
-                row_deletable=True
-            ),
+            html.Div([
+                html.H1('Stock'),
+                dash_table.DataTable(
+                    id='adding-rows-table',
+                    columns=[
+                        {'name': 'Ticker', 'id': 'ticker-data'},
+                        {'name': 'Number', 'id': 'number-data'}
+                    ],
+                    data=[{}],
+                    editable=True,
+                    row_deletable=True
+                ),
 
-            html.Button('Add Row', id='editing-rows-button', n_clicks=0),
-            html.Button('Submit', id='submit-button', n_clicks=0)
+                html.Button('Add Row', id='editing-rows-button', n_clicks=0),
+                html.Button('Submit', id='submit-button', n_clicks=0)
 
-        ], className='Table'),),
-
+            ], className='Table'), ),
 
         dbc.Col(
-        html.Div([
-            html.H1('Description'),
-            dcc.Dropdown(
-                id = 'drop-down',
-                options = [
-                    {'label' : 'Energy', 'value' : 'Energy'},
-                    {'label' : 'Utility', 'value' : 'Utility'},
-                    {'label' : 'Consumer Staples', 'value' : 'ConsumerStaple'},
-                    {'label' : 'Health Care', 'value' : 'HealthCare'},
-                    {'label' : 'Real Estate', 'value' : 'RealEstate'},
-                    {'label' : 'Communication Services', 'value' : 'CommunicationService'},
-                    {'label' : 'Information Technology', 'value' : 'InformationTechnology'},
-                    {'label' : 'Consumer Cyclical', 'value' : 'ConsumerCyclical'},
-                    {'label' : 'Financial', 'value' : 'Financial'},
-                    {'label' : 'Industrial', 'value' : 'Industrial'},
-                    {'label' : 'Material', 'value' : 'Material'}
-                ],
-                value='Energy'
-            ),
-            html.Div(id='drop-down-output'),
-            html.H3('Major example of this sector'),
-            html.Div(id='example'),
-            html.H3('Major ETF of this Sector'),
-            html.Div(id='etf_example')
+            html.Div([
+                html.H1('Description'),
+                dcc.Dropdown(
+                    id='drop-down',
+                    options=[
+                        {'label': 'Energy', 'value': 'Energy'},
+                        {'label': 'Utility', 'value': 'Utility'},
+                        {'label': 'Consumer Staples', 'value': 'ConsumerStaple'},
+                        {'label': 'Health Care', 'value': 'HealthCare'},
+                        {'label': 'Real Estate', 'value': 'RealEstate'},
+                        {'label': 'Communication Services', 'value': 'CommunicationService'},
+                        {'label': 'Information Technology', 'value': 'InformationTechnology'},
+                        {'label': 'Consumer Cyclical', 'value': 'ConsumerCyclical'},
+                        {'label': 'Financial', 'value': 'Financial'},
+                        {'label': 'Industrial', 'value': 'Industrial'},
+                        {'label': 'Material', 'value': 'Material'}
+                    ],
+                    value='Energy'
+                ),
+                html.Div(id='drop-down-output'),
+                html.H3('Major example of this sector'),
+                html.Div(id='example'),
+                html.H3('Major ETF of this Sector'),
+                html.Div(id='etf_example')
 
-        ], className='Description'),)]),
-
-
-        html.Div([
-            html.Div([], id='graphs-contents')]),
-
-
+            ], className='Description'), )]),
+    dbc.Row([
+        html.Div([], id='graphs-contents')
+    ])
 ], className='container')
 
-
-
-@app.callback(
+@ app.callback(
     Output('adding-rows-table', 'data'),
     Input('editing-rows-button', 'n_clicks'),
     State('adding-rows-table', 'data'),
     State('adding-rows-table', 'columns'))
+
+
 def add_row(n_clicks, rows, columns):
     if n_clicks > 0:
         rows.append({c['id']: '' for c in columns})
     return rows
+
 
 @app.callback(
     [Output('graphs-contents', 'children')],
